@@ -1,0 +1,6 @@
+com\credibanco\mstest\services\impl\test\TransactionServicesImplTest.class
+com\credibanco\mstest\services\impl\test\CardServicesImplTest.class
+com\credibanco\mstest\services\impl\test\ProductServicesImplTest.class
+com\credibanco\mstest\applications\test\BusinessApplicationTest.class
+com\credibanco\mstest\services\impl\test\package-info.class
+com\credibanco\mstest\applications\test\package-info.class

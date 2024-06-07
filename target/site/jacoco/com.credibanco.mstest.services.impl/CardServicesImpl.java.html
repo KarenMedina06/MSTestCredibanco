@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CardServicesImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Test</a> &gt; <a href="index.source.html" class="el_package">com.credibanco.mstest.services.impl</a> &gt; <span class="el_source">CardServicesImpl.java</span></div><h1>CardServicesImpl.java</h1><pre class="source lang-java linenums">package com.credibanco.mstest.services.impl;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.credibanco.mstest.entities.Card;
+import com.credibanco.mstest.entities.Product;
+import com.credibanco.mstest.repositories.ICardRepository;
+import com.credibanco.mstest.services.ICardServices;
+import com.credibanco.mstest.util.Util;
+
+@Service
+<span class="nc" id="L15">public class CardServicesImpl implements ICardServices{</span>
+	
+	public static final String INACTIVE = &quot;INACTIVE&quot;;
+	public static final String ACTIVE = &quot;ACTIVE&quot;;
+	
+	@Autowired
+	private ICardRepository cardRepository;
+	
+	@Autowired
+	private Util util;
+
+	@Override
+	public Card generateCardNumber(Product product) {
+<span class="nc" id="L28">		Card card = new Card(util.generateCardNumber(String.valueOf(product.getProductId())), </span>
+<span class="nc" id="L29">				product.getClients().getFristName() + &quot; &quot; + product.getClients().getLastName(), </span>
+<span class="nc" id="L30">				util.calculateExpirationDate(), (long) 0, INACTIVE, product, null);</span>
+<span class="nc" id="L31">		return cardRepository.save(card);</span>
+	}
+
+	@Override
+	public Card cardActivation(Card card) {
+<span class="nc" id="L36">		card.setStatus(ACTIVE);</span>
+<span class="nc" id="L37">		return cardRepository.save(card);</span>
+	}
+
+	@Override
+	public Card blockCard(Card card) {
+<span class="nc" id="L42">		card.setStatus(INACTIVE);</span>
+<span class="nc" id="L43">		return cardRepository.save(card);</span>
+	}
+
+	@Override
+	public Card updateBalance(Card card, Long balance) {
+<span class="nc" id="L48">		card.setBalance(balance);</span>
+<span class="nc" id="L49">		return cardRepository.save(card);</span>
+	}
+
+	@Override
+	public Optional&lt;Card&gt; getCardById(Long cardId) {
+<span class="nc" id="L54">		return cardRepository.findById(cardId);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

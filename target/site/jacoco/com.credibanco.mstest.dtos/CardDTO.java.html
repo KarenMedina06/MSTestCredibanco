@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CardDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Test</a> &gt; <a href="index.source.html" class="el_package">com.credibanco.mstest.dtos</a> &gt; <span class="el_source">CardDTO.java</span></div><h1>CardDTO.java</h1><pre class="source lang-java linenums">package com.credibanco.mstest.dtos;
+
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+<span class="nc" id="L8">@NoArgsConstructor</span>
+<span class="nc" id="L9">@AllArgsConstructor</span>
+public class CardDTO implements Serializable {
+
+	private static final long serialVersionUID = 8603786052632968538L;
+
+	private Long cardId;
+	private Long balance;
+	private Long price;
+	private Long transactionId;
+
+	public Long getCardId() {
+<span class="nc" id="L20">		return cardId;</span>
+	}
+
+	public void setCardId(Long cardId) {
+<span class="nc" id="L24">		this.cardId = cardId;</span>
+<span class="nc" id="L25">	}</span>
+
+	public Long getBalance() {
+<span class="nc" id="L28">		return balance;</span>
+	}
+
+	public void setBalance(Long balance) {
+<span class="nc" id="L32">		this.balance = balance;</span>
+<span class="nc" id="L33">	}</span>
+
+	public Long getPrice() {
+<span class="nc" id="L36">		return price;</span>
+	}
+
+	public void setPrice(Long price) {
+<span class="nc" id="L40">		this.price = price;</span>
+<span class="nc" id="L41">	}</span>
+
+	public Long getTransactionId() {
+<span class="nc" id="L44">		return transactionId;</span>
+	}
+
+	public void setTransactionId(Long transactionId) {
+<span class="nc" id="L48">		this.transactionId = transactionId;</span>
+<span class="nc" id="L49">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

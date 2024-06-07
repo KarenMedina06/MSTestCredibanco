@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SwaggerProperties.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Test</a> &gt; <a href="index.source.html" class="el_package">com.credibanco.mstest.configurations</a> &gt; <span class="el_source">SwaggerProperties.java</span></div><h1>SwaggerProperties.java</h1><pre class="source lang-java linenums">package com.credibanco.mstest.configurations;
+
+import java.io.Serializable;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+<span class="nc" id="L14">@Setter</span>
+@Configuration(&quot;SwaggerProperties&quot;)
+@PropertySource(&quot;classpath:application.properties&quot;)
+<span class="nc" id="L17">public class SwaggerProperties implements Serializable {</span>
+
+	private static final long serialVersionUID = -1710430065264968271L;
+
+	@Value(&quot;${api.version}&quot;)
+<span class="nc" id="L22">	private String apiVersion;</span>
+
+<span class="nc" id="L24">	@Value(&quot;${swagger.enabled}&quot;)</span>
+<span class="nc" id="L25">	private String enabled = &quot;false&quot;;</span>
+
+	@Value(&quot;${swagger.title}&quot;)
+<span class="nc" id="L28">	private String title;</span>
+
+	@Value(&quot;${swagger.description}&quot;)
+<span class="nc" id="L31">	private String description;</span>
+
+	@Value(&quot;${swagger.useDefaultResponseMessages}&quot;)
+<span class="nc" id="L34">	private String useDefaultResponseMessages;</span>
+
+	@Value(&quot;${swagger.enableUrlTemplating}&quot;)
+<span class="nc" id="L37">	private String enableUrlTemplating;</span>
+
+	@Value(&quot;${swagger.deepLinking}&quot;)
+<span class="nc" id="L40">	private String deepLinking;</span>
+
+	@Value(&quot;${swagger.defaultModelsExpandDepth}&quot;)
+<span class="nc" id="L43">	private String defaultModelsExpandDepth;</span>
+
+	@Value(&quot;${swagger.defaultModelExpandDepth}&quot;)
+<span class="nc" id="L46">	private String defaultModelExpandDepth;</span>
+
+	@Value(&quot;${swagger.displayOperationId}&quot;)
+<span class="nc" id="L49">	private String displayOperationId;</span>
+
+	@Value(&quot;${swagger.displayRequestDuration}&quot;)
+<span class="nc" id="L52">	private String displayRequestDuration;</span>
+
+	@Value(&quot;${swagger.filter}&quot;)
+<span class="nc" id="L55">	private String filter;</span>
+
+	@Value(&quot;${swagger.maxDisplayedTags}&quot;)
+<span class="nc" id="L58">	private String maxDisplayedTags;</span>
+
+	@Value(&quot;${swagger.showExtensions}&quot;)
+<span class="nc" id="L61">	private String showExtensions;</span>
+
+	@Override
+	public String toString() {
+<span class="nc" id="L65">		return &quot;SwaggerConfigProperties [apiVersion=&quot; + apiVersion + &quot;, enabled=&quot; + enabled + &quot;, title=&quot; + title</span>
+				+ &quot;, description=&quot; + description + &quot;, useDefaultResponseMessages=&quot; + useDefaultResponseMessages
+				+ &quot;, enableUrlTemplating=&quot; + enableUrlTemplating + &quot;, deepLinking=&quot; + deepLinking
+				+ &quot;, defaultModelsExpandDepth=&quot; + defaultModelsExpandDepth + &quot;, defaultModelExpandDepth=&quot;
+				+ defaultModelExpandDepth + &quot;, displayOperationId=&quot; + displayOperationId + &quot;, displayRequestDuration=&quot;
+				+ displayRequestDuration + &quot;, filter=&quot; + filter + &quot;, maxDisplayedTags=&quot; + maxDisplayedTags
+				+ &quot;, showExtensions=&quot; + showExtensions + &quot;]&quot;;
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

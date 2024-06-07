@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SwaggerConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Test</a> &gt; <a href="index.source.html" class="el_package">com.credibanco.mstest.configurations</a> &gt; <span class="el_source">SwaggerConfiguration.java</span></div><h1>SwaggerConfiguration.java</h1><pre class="source lang-java linenums">package com.credibanco.mstest.configurations;
+
+import java.time.LocalDate;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.DocExpansion;
+import springfox.documentation.swagger.web.ModelRendering;
+import springfox.documentation.swagger.web.OperationsSorter;
+import springfox.documentation.swagger.web.TagsSorter;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@Configuration
+@EnableSwagger2
+<span class="nc" id="L24">public class SwaggerConfiguration {</span>
+
+	@Bean
+	Docket eDesignApi(SwaggerProperties swaggerConfigProperties) {
+<span class="nc" id="L28">		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo(swaggerConfigProperties))</span>
+<span class="nc" id="L29">				.enable(Boolean.parseBoolean(swaggerConfigProperties.getEnabled())).select()</span>
+<span class="nc" id="L30">				.apis(RequestHandlerSelectors.basePackage(&quot;/&quot;))</span>
+<span class="nc" id="L31">				.paths(PathSelectors.any()).build().pathMapping(&quot;/&quot;)</span>
+<span class="nc" id="L32">				.directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)</span>
+<span class="nc" id="L33">				.useDefaultResponseMessages(</span>
+<span class="nc" id="L34">						Boolean.parseBoolean(swaggerConfigProperties.getUseDefaultResponseMessages()))</span>
+<span class="nc" id="L35">				.enableUrlTemplating(Boolean.parseBoolean(swaggerConfigProperties.getEnableUrlTemplating()));</span>
+	}
+
+	@Bean
+	UiConfiguration uiConfig(SwaggerProperties swaggerConfigProperties) {
+<span class="nc" id="L40">		return UiConfigurationBuilder.builder().deepLinking(Boolean.valueOf(swaggerConfigProperties.getDeepLinking()))</span>
+<span class="nc" id="L41">				.displayOperationId(Boolean.valueOf(swaggerConfigProperties.getDisplayOperationId()))</span>
+<span class="nc" id="L42">				.defaultModelsExpandDepth(Integer.valueOf(swaggerConfigProperties.getDefaultModelsExpandDepth()))</span>
+<span class="nc" id="L43">				.defaultModelExpandDepth(Integer.valueOf(swaggerConfigProperties.getDefaultModelExpandDepth()))</span>
+<span class="nc" id="L44">				.defaultModelRendering(ModelRendering.EXAMPLE)</span>
+<span class="nc" id="L45">				.displayRequestDuration(Boolean.valueOf(swaggerConfigProperties.getDisplayRequestDuration()))</span>
+<span class="nc" id="L46">				.docExpansion(DocExpansion.NONE).filter(Boolean.valueOf(swaggerConfigProperties.getFilter()))</span>
+<span class="nc" id="L47">				.maxDisplayedTags(Integer.valueOf(swaggerConfigProperties.getMaxDisplayedTags()))</span>
+<span class="nc" id="L48">				.operationsSorter(OperationsSorter.ALPHA)</span>
+<span class="nc" id="L49">				.showExtensions(Boolean.valueOf(swaggerConfigProperties.getShowExtensions()))</span>
+<span class="nc" id="L50">				.tagsSorter(TagsSorter.ALPHA).supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS)</span>
+<span class="nc" id="L51">				.validatorUrl(null).build();</span>
+	}
+
+	private ApiInfo apiInfo(SwaggerProperties swaggerConfigProperties) {
+<span class="nc" id="L55">		return new ApiInfoBuilder().title(swaggerConfigProperties.getTitle())</span>
+<span class="nc" id="L56">				.description(swaggerConfigProperties.getDescription()).version(swaggerConfigProperties.getApiVersion())</span>
+<span class="nc" id="L57">				.build();</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
