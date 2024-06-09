@@ -1,10 +1,12 @@
 package com.credibanco.mstest.services.impl.test;
 
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,9 +58,12 @@ public class ProductServicesImplTest {
 	@Test
 	void updateAlreadyRegisterTest() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
-		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
-		Product responseProductMock = servicesImpl.updateAlreadyRegister(productMock);
-		verify(repository).save(productMock);
+		Optional<Product> productMock = Optional.ofNullable(new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock));
+		when(repository.findById((long) 1)).thenReturn(productMock);
+		servicesImpl.updateAlreadyRegister(productMock.get());
+		assertEquals(true, productMock.get().getAlreadyRegistered());
+		verify(repository, times(1)).save(productMock.get());
+		
 	}
 
 }

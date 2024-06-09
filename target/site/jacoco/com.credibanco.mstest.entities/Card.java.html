@@ -19,16 +19,16 @@ import lombok.Setter;
 @Table(name = &quot;cards&quot;)
 @Entity
 @Getter
-<span class="nc" id="L22">@Setter</span>
-<span class="nc" id="L23">@AllArgsConstructor</span>
-<span class="nc" id="L24">@NoArgsConstructor</span>
+<span class="pc" id="L22">@Setter</span>
+<span class="fc" id="L23">@AllArgsConstructor</span>
+<span class="fc" id="L24">@NoArgsConstructor</span>
 public class Card implements Serializable{
 	
 	private static final long serialVersionUID = 4420941184988435966L;
 	
 	@Id
 	@Column(name = &quot;cardId&quot;, length = 16, nullable = false, unique = true)
-<span class="nc" id="L31">	private Long cardId;</span>
+<span class="fc" id="L31">	private Long cardId;</span>
 	
 	@Column(name = &quot;ownerName&quot;)
 <span class="nc" id="L34">	private String ownerName;</span>
@@ -37,13 +37,13 @@ public class Card implements Serializable{
 <span class="nc" id="L37">	private String expirationDate;</span>
 	
 	@Column(name = &quot;balance&quot;)
-<span class="nc" id="L40">	private Long balance;</span>
+<span class="fc" id="L40">	private Long balance;</span>
 	
 	@Column(name = &quot;status&quot;)
-<span class="nc" id="L43">	private String status;</span>
+<span class="fc" id="L43">	private String status;</span>
 	
 	@ManyToOne
-    @JoinColumn(name = &quot;idProduct&quot;)
+    @JoinColumn(name = &quot;idProduct&quot;, nullable = false)
 <span class="nc" id="L47">    private Product product;</span>
 	
 	@OneToMany(mappedBy = &quot;card&quot;)

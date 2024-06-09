@@ -43,7 +43,7 @@ public class Card implements Serializable{
 	private String status;
 	
 	@ManyToOne
-    @JoinColumn(name = "idProduct")
+    @JoinColumn(name = "idProduct", nullable = false)
     private Product product;
 	
 	@OneToMany(mappedBy = "card")

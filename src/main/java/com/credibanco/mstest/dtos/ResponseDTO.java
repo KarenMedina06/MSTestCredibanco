@@ -12,7 +12,6 @@ public class ResponseDTO<T> implements Serializable {
 	private HttpStatus responseCode;
 	private String message;
 	private transient T data;
-	private String trackId;
 	
 	public HttpStatus getResponseCode() {
 		return responseCode;
@@ -38,19 +37,10 @@ public class ResponseDTO<T> implements Serializable {
 		this.data = data;
 	}
 
-	public String getTrackId() {
-		return trackId;
-	}
-
-	public void setTrackId(String trackId) {
-		this.trackId = trackId;
-	}
-
-	public ResponseDTO(HttpStatus responseCode, String message, T data, String trackId) {
+	public ResponseDTO(HttpStatus responseCode, String message, T data) {
 		this.responseCode = responseCode;
 		this.message = message;
 		this.data = data;
-		this.trackId = trackId;
 	}
 
 	public ResponseDTO() {

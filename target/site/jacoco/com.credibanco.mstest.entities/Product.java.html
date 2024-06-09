@@ -20,9 +20,9 @@ import lombok.Setter;
 @Table(name = &quot;products&quot;)
 @Entity
 @Getter
-<span class="nc" id="L23">@Setter</span>
+<span class="pc" id="L23">@Setter</span>
 <span class="fc" id="L24">@AllArgsConstructor</span>
-<span class="nc" id="L25">@NoArgsConstructor</span>
+<span class="fc" id="L25">@NoArgsConstructor</span>
 public class Product implements Serializable{
 	
 	private static final long serialVersionUID = 6998500906816037882L;
@@ -33,20 +33,20 @@ public class Product implements Serializable{
 <span class="nc" id="L33">	private Long id;</span>
 	
 	@Column(name = &quot;productId&quot;, length = 6, nullable = false)
-<span class="nc" id="L36">	private Long productId;</span>
+<span class="fc" id="L36">	private Long productId;</span>
 	
 	@Column(name = &quot;productName&quot;)
 <span class="nc" id="L39">	private String productName;</span>
 	
 	@Column(name = &quot;alreadyRegistered&quot;)
-<span class="nc" id="L42">	private Boolean alreadyRegistered;</span>
+<span class="fc" id="L42">	private Boolean alreadyRegistered;</span>
 	
 	@OneToMany(mappedBy = &quot;product&quot;)
 <span class="nc" id="L45">    private List&lt;Card&gt; cards;</span>
 	
 	@ManyToOne
     @JoinColumn(name = &quot;clientId&quot;)
-<span class="nc" id="L49">    private Clients clients;</span>
+<span class="fc" id="L49">    private Clients clients;</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

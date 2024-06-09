@@ -21,10 +21,10 @@ import com.credibanco.mstest.services.IProductServices;
 	}
 
 	@Override
-	public void updateAlreadyRegister(Product product) {
-<span class="nc" id="L25">		product.setAlreadyRegistered(true);</span>
-<span class="nc" id="L26">		productRepository.save(product);</span>
-<span class="nc" id="L27">	}</span>
+	public Product updateAlreadyRegister(Product product) {
+<span class="fc" id="L25">		product.setAlreadyRegistered(true);</span>
+<span class="fc" id="L26">		return productRepository.save(product);</span>
+	}
 
 	
 }

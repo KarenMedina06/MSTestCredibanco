@@ -23,8 +23,6 @@ import com.credibanco.mstest.services.ICardServices;
 import com.credibanco.mstest.services.IProductServices;
 import com.credibanco.mstest.services.ITransactionServices;
 
-import brave.Tracer;
-
 @Service
 public class BusinessApplication implements IBusinessApplication {
 
@@ -41,9 +39,6 @@ public class BusinessApplication implements IBusinessApplication {
 	@Autowired
 	private ITransactionServices transactionServices;
 
-	@Autowired
-	private Tracer tracer;
-
 	@Override
 	public Object validateGenerateNumberCard(Long productId) {
 		try {
@@ -51,40 +46,34 @@ public class BusinessApplication implements IBusinessApplication {
 			Card card = services.generateCardNumber(product.get(0));
 			if (Objects.nonNull(card) && Objects.nonNull(productServices.updateAlreadyRegister(product.get(0)))) {
 				return new ResponseDTO<>(HttpStatus.CREATED, "Numero de Tarjeta generada exitosamente",
-						card.getCardId(), tracer.currentSpan().context().traceIdString());
+						card.getCardId());
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
 
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se puede generar el número de la tarjeta",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED,
+				"No se puede generar el número de la tarjeta");
 	}
 
 	@Override
 	public Object enrollCard(Long cardId) {
 		Optional<Card> card = services.getCardById(cardId);
-		if (Objects.isNull(card)) {
+		if (card.isEmpty()) {
 			throw new BadRequestException(ERROR_GET_CARD);
 		}
 		try {
-			if (card.isPresent()) {
-				Card updateCard = card.get();
-				if (Objects.nonNull(services.cardActivation(updateCard))) {
-					HashMap<String, String> map = new HashMap<>();
-					map.put(CARDID, String.valueOf(updateCard.getCardId()));
-					map.put("status", updateCard.getStatus());
-					return new ResponseDTO<>(HttpStatus.OK, "Tarjeta Activida Correctamente", map,
-							tracer.currentSpan().context().traceIdString());
-				}
+			Card updateCard = card.get();
+			if (Objects.nonNull(services.cardActivation(updateCard))) {
+				HashMap<String, String> map = new HashMap<>();
+				map.put(CARDID, String.valueOf(updateCard.getCardId()));
+				map.put("status", updateCard.getStatus());
+				return new ResponseDTO<>(HttpStatus.OK, "Tarjeta Activida Correctamente", map);
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se puede activar la tarjeta",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se puede activar la tarjeta");
 	}
 
 	@Override
@@ -95,15 +84,12 @@ public class BusinessApplication implements IBusinessApplication {
 		}
 		try {
 			if (Objects.isNull(services.blockCard(card.get()))) {
-				return new ResponseDTO<>(HttpStatus.OK, "OK", "Tarjeta Bloqueada Exitosamente",
-						tracer.currentSpan().context().traceIdString());
+				return new ResponseDTO<>(HttpStatus.OK, "OK", "Tarjeta Bloqueada Exitosamente");
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo bloquear la tarjeta",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo bloquear la tarjeta");
 	}
 
 	@Override
@@ -125,16 +111,13 @@ public class BusinessApplication implements IBusinessApplication {
 				if (Objects.nonNull(services.updateBalance(rechargeCard, balance))) {
 					response.put(CARDID, String.valueOf(rechargeCard.getCardId()));
 					response.put("balance", String.valueOf(rechargeCard.getBalance()));
-					return new ResponseDTO<>(HttpStatus.OK, "Tarjeta Recargada Exitosamente", response,
-							tracer.currentSpan().context().traceIdString());
+					return new ResponseDTO<>(HttpStatus.OK, "Tarjeta Recargada Exitosamente", response);
 				}
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo recargar la tarjeta",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo recargar la tarjeta");
 	}
 
 	@Override
@@ -142,11 +125,10 @@ public class BusinessApplication implements IBusinessApplication {
 		HashMap<String, String> response = new HashMap<>();
 		Optional<Card> card = services.getCardById(cardId);
 		if (card.isEmpty()) {
-			return new ResponseDTO<>(HttpStatus.OK, "NOT FOUND", "No se encontro una tarjeta asociada",
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.OK, "NOT FOUND", "No se encontro una tarjeta asociada");
 		} else {
 			response.put("balance", String.valueOf(card.get().getBalance()));
-			return new ResponseDTO<>(HttpStatus.OK, "OK", response, tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.OK, "OK", response);
 		}
 	}
 
@@ -166,16 +148,13 @@ public class BusinessApplication implements IBusinessApplication {
 				Card newCard = services.updateBalance(card.get(), newBalance);
 				CardDTO dto = new CardDTO(cardId, newBalance, price, transaction.getTransactionId());
 				if (newCard.getBalance().equals(newBalance)) {
-					return new ResponseDTO<>(HttpStatus.CREATED, "Transacción Exitosa", dto,
-							tracer.currentSpan().context().traceIdString());
+					return new ResponseDTO<>(HttpStatus.CREATED, "Transacción Exitosa", dto);
 				}
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo realizar la transaccion",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo realizar la transaccion");
 	}
 
 	@Override
@@ -187,10 +166,9 @@ public class BusinessApplication implements IBusinessApplication {
 		try {
 			CardDTO dto = new CardDTO(transaction.get().getCard().getCardId(), transaction.get().getCard().getBalance(),
 					transaction.get().getPrice(), transaction.get().getTransactionId());
-			return new ResponseDTO<>(HttpStatus.OK, "OK", dto, tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.OK, "OK", dto);
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
 	}
 
@@ -198,7 +176,7 @@ public class BusinessApplication implements IBusinessApplication {
 	public Object anulationTransaction(Long cardId, Long transactionId) {
 		LocalDate now = LocalDate.now();
 		Optional<Card> card = services.getCardById(cardId);
-		if (Objects.isNull(card)) {
+		if (card.isEmpty()) {
 			throw new BadRequestException(ERROR_GET_CARD);
 		}
 		Optional<Transaction> transaction = transactionServices.getById(transactionId);
@@ -208,31 +186,27 @@ public class BusinessApplication implements IBusinessApplication {
 		try {
 			LocalDate targetDateTime = Instant.ofEpochMilli(transaction.get().getTransactionDate().getTime())
 					.atZone(ZoneId.systemDefault()).toLocalDate();
-			if (!targetDateTime.equals(now)) {
-				Duration duration = Duration.between(targetDateTime, now);
-				if (duration.toHours() > 24) {
-					throw new BadRequestException("No se puede anular la transaccion, no debe ser mayor a 24 horas");
-				}
+			if (targetDateTime != now && targetDateTime.isBefore(now)) {
+				throw new BadRequestException("No se puede anular la transaccion, no debe ser mayor a 24 horas");
 			}
-			if (card.isPresent() && Objects.nonNull(transactionServices.cancelTransaction(transaction.get()))) {
+			if (Objects.nonNull(transactionServices.cancelTransaction(transaction.get()))) {
 				Card updateCard = card.get();
-				Long newBalance = updateCard.getBalance() + transaction.get().getPrice();
+				Long lastBalance = updateCard.getBalance();
+				Long returnBalance = transaction.get().getPrice();
+				Long newBalance = returnBalance + lastBalance;
 				Card newCard = services.updateBalance(card.get(), newBalance);
 				if (newCard.getBalance().equals(newBalance)) {
 					HashMap<String, Long> map = new HashMap<>();
 					map.put(CARDID, newCard.getCardId());
 					map.put("last balance", card.get().getBalance());
 					map.put("new balance", newCard.getBalance());
-					return new ResponseDTO<>(HttpStatus.OK, "Transacción Anulada Exitosa", map,
-							tracer.currentSpan().context().traceIdString());
+					return new ResponseDTO<>(HttpStatus.OK, "Transacción Anulada Exitosa", map);
 				}
 			}
 		} catch (Exception e) {
-			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e,
-					tracer.currentSpan().context().traceIdString());
+			return new ResponseDTO<>(HttpStatus.INTERNAL_SERVER_ERROR, FAILED, e);
 		}
-		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo anular la transaccion",
-				tracer.currentSpan().context().traceIdString());
+		return new ResponseDTO<>(HttpStatus.GATEWAY_TIMEOUT, FAILED, "No se pudo anular la transaccion");
 	}
 
 }

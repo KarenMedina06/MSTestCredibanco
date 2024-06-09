@@ -17,29 +17,29 @@ import lombok.Setter;
 @Table(name = &quot;transactions&quot;)
 @Entity
 @Getter
-<span class="nc" id="L20">@Setter</span>
-<span class="nc" id="L21">@AllArgsConstructor</span>
-<span class="nc" id="L22">@NoArgsConstructor</span>
+<span class="fc" id="L20">@Setter</span>
+<span class="fc" id="L21">@AllArgsConstructor</span>
+<span class="fc" id="L22">@NoArgsConstructor</span>
 public class Transaction implements Serializable{
 	
 	private static final long serialVersionUID = -3972525257934579963L;
 	
 	@Id
 	@Column(name = &quot;transactionId&quot;, nullable = false)
-<span class="nc" id="L29">	private Long transactionId;</span>
+<span class="fc" id="L29">	private Long transactionId;</span>
 	
 	@Column(name = &quot;price&quot;, nullable = false)
-<span class="nc" id="L32">	private Long price;</span>
+<span class="fc" id="L32">	private Long price;</span>
 	
 	@Column(name = &quot;transactionDate&quot;)
-<span class="nc" id="L35">	private Date transactionDate;</span>
+<span class="fc" id="L35">	private Date transactionDate;</span>
 	
 	@Column(name = &quot;status&quot;)
-<span class="nc" id="L38">	private String status;</span>
+<span class="fc" id="L38">	private String status;</span>
 	
 	@ManyToOne
     @JoinColumn(name = &quot;cardId&quot;)
-<span class="nc" id="L42">    private Card card;</span>
+<span class="fc" id="L42">    private Card card;</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

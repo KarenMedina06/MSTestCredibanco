@@ -12,7 +12,7 @@ import com.credibanco.mstest.services.ICardServices;
 import com.credibanco.mstest.util.Util;
 
 @Service
-<span class="nc" id="L15">public class CardServicesImpl implements ICardServices{</span>
+<span class="fc" id="L15">public class CardServicesImpl implements ICardServices{</span>
 	
 	public static final String INACTIVE = &quot;INACTIVE&quot;;
 	public static final String ACTIVE = &quot;ACTIVE&quot;;
@@ -25,33 +25,33 @@ import com.credibanco.mstest.util.Util;
 
 	@Override
 	public Card generateCardNumber(Product product) {
-<span class="nc" id="L28">		Card card = new Card(util.generateCardNumber(String.valueOf(product.getProductId())), </span>
-<span class="nc" id="L29">				product.getClients().getFristName() + &quot; &quot; + product.getClients().getLastName(), </span>
-<span class="nc" id="L30">				util.calculateExpirationDate(), (long) 0, INACTIVE, product, null);</span>
-<span class="nc" id="L31">		return cardRepository.save(card);</span>
+<span class="fc" id="L28">		Card card = new Card(util.generateCardNumber(String.valueOf(product.getProductId())), </span>
+<span class="fc" id="L29">				product.getClients().getFristName() + &quot; &quot; + product.getClients().getLastName(), </span>
+<span class="fc" id="L30">				util.calculateExpirationDate(), (long) 0, INACTIVE, product, null);</span>
+<span class="fc" id="L31">		return cardRepository.save(card);</span>
 	}
 
 	@Override
 	public Card cardActivation(Card card) {
-<span class="nc" id="L36">		card.setStatus(ACTIVE);</span>
-<span class="nc" id="L37">		return cardRepository.save(card);</span>
+<span class="fc" id="L36">		card.setStatus(ACTIVE);</span>
+<span class="fc" id="L37">		return cardRepository.save(card);</span>
 	}
 
 	@Override
 	public Card blockCard(Card card) {
-<span class="nc" id="L42">		card.setStatus(INACTIVE);</span>
-<span class="nc" id="L43">		return cardRepository.save(card);</span>
+<span class="fc" id="L42">		card.setStatus(INACTIVE);</span>
+<span class="fc" id="L43">		return cardRepository.save(card);</span>
 	}
 
 	@Override
 	public Card updateBalance(Card card, Long balance) {
-<span class="nc" id="L48">		card.setBalance(balance);</span>
-<span class="nc" id="L49">		return cardRepository.save(card);</span>
+<span class="fc" id="L48">		card.setBalance(balance);</span>
+<span class="fc" id="L49">		return cardRepository.save(card);</span>
 	}
 
 	@Override
 	public Optional&lt;Card&gt; getCardById(Long cardId) {
-<span class="nc" id="L54">		return cardRepository.findById(cardId);</span>
+<span class="fc" id="L54">		return cardRepository.findById(cardId);</span>
 	}
 
 }
