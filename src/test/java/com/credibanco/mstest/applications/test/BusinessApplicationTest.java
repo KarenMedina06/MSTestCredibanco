@@ -1,11 +1,8 @@
 package com.credibanco.mstest.applications.test;
 
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;

@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+
+import com.google.common.base.Predicate;
+
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -27,8 +31,8 @@ public class SwaggerConfiguration {
 	Docket eDesignApi(SwaggerProperties swaggerConfigProperties) {
 		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo(swaggerConfigProperties))
 				.enable(Boolean.parseBoolean(swaggerConfigProperties.getEnabled())).select()
-				.apis(RequestHandlerSelectors.basePackage("/"))
-				.paths(PathSelectors.any()).build().pathMapping("/")
+				.apis((Predicate<RequestHandler>) RequestHandlerSelectors.any())
+				.paths((Predicate<String>) PathSelectors.any()).build().pathMapping("/")
 				.directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
 				.useDefaultResponseMessages(
 						Boolean.parseBoolean(swaggerConfigProperties.getUseDefaultResponseMessages()))
