@@ -43,7 +43,7 @@ public class ProductServicesImplTest {
 	
 	
 	@Test
-	void getProductByIdAndAlreadyRegisterTest() {
+	void testGetProductByIdAndAlreadyRegister() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
         myList.add(productMock);
@@ -54,7 +54,7 @@ public class ProductServicesImplTest {
 	}
 	
 	@Test
-	void updateAlreadyRegisterTest() {
+	void testUpdateAlreadyRegister() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Optional<Product> productMock = Optional.ofNullable(new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock));
 		when(repository.findById((long) 1)).thenReturn(productMock);

@@ -36,7 +36,7 @@ public class TransactionServicesImplTest {
 	private Util util;
 	
 	@Test
-	void createTransactionTest() {
+	void testCreateTransaction() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 10000, "ACTIVE", productMock, null);
@@ -54,7 +54,7 @@ public class TransactionServicesImplTest {
 	}
 	
 	@Test
-	void getByIdTest() {
+	void testGetById() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(Long.parseLong("1020301234567890"), "Jhon Doe", "06/27", (long) 10000, "ACTIVE", productMock, null);
@@ -66,7 +66,7 @@ public class TransactionServicesImplTest {
 	}
 	
 	@Test
-	void cancelTransactionTest() {
+	void testCancelTransaction() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(Long.parseLong("1020301234567890"), "Jhon Doe", "06/27", (long) 10000, "ACTIVE", productMock, null);

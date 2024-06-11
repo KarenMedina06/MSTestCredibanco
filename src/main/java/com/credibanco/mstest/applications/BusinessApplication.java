@@ -61,6 +61,9 @@ public class BusinessApplication implements IBusinessApplication {
 		if (card.isEmpty()) {
 			throw new BadRequestException(ERROR_GET_CARD);
 		}
+		if (card.get().getStatus().equals("INACTIVE")) {
+			throw new BadRequestException("No se puede recargar una tarjeta no activada");
+		}
 		try {
 			Card updateCard = card.get();
 			if (Objects.nonNull(services.cardActivation(updateCard))) {
@@ -82,7 +85,7 @@ public class BusinessApplication implements IBusinessApplication {
 			throw new BadRequestException(ERROR_GET_CARD);
 		}
 		try {
-			if (Objects.isNull(services.blockCard(card.get()))) {
+			if (Objects.nonNull(services.blockCard(card.get()))) {
 				return new ResponseDTO<>(HttpStatus.OK, "OK", "Tarjeta Bloqueada Exitosamente");
 			}
 		} catch (Exception e) {
@@ -173,6 +176,7 @@ public class BusinessApplication implements IBusinessApplication {
 
 	@Override
 	public Object anulationTransaction(Long cardId, Long transactionId) {
+		HashMap<String, Long> map = new HashMap<>();
 		LocalDate now = LocalDate.now();
 		Optional<Card> card = services.getCardById(cardId);
 		if (card.isEmpty()) {
@@ -182,12 +186,15 @@ public class BusinessApplication implements IBusinessApplication {
 		if (transaction.isEmpty()) {
 			throw new BadRequestException("No se encuentra la transaccion");
 		}
+		if (transaction.get().getStatus().equals("CANCEL")) {
+			throw new BadRequestException("No se puede anular una transaccion ya anulada");
+		}
+		LocalDate targetDateTime = Instant.ofEpochMilli(transaction.get().getTransactionDate().getTime())
+				.atZone(ZoneId.systemDefault()).toLocalDate();
+		if (targetDateTime != now && targetDateTime.isBefore(now)) {
+			throw new BadRequestException("No se puede anular una transacción despues de 24 horas realizada");
+		}
 		try {
-			LocalDate targetDateTime = Instant.ofEpochMilli(transaction.get().getTransactionDate().getTime())
-					.atZone(ZoneId.systemDefault()).toLocalDate();
-			if (targetDateTime != now && targetDateTime.isBefore(now)) {
-				throw new BadRequestException("No se puede anular la transaccion, no debe ser mayor a 24 horas");
-			}
 			if (Objects.nonNull(transactionServices.cancelTransaction(transaction.get()))) {
 				Card updateCard = card.get();
 				Long lastBalance = updateCard.getBalance();
@@ -195,9 +202,8 @@ public class BusinessApplication implements IBusinessApplication {
 				Long newBalance = returnBalance + lastBalance;
 				Card newCard = services.updateBalance(card.get(), newBalance);
 				if (newCard.getBalance().equals(newBalance)) {
-					HashMap<String, Long> map = new HashMap<>();
 					map.put(CARDID, newCard.getCardId());
-					map.put("last balance", card.get().getBalance());
+					map.put("last balance", lastBalance);
 					map.put("new balance", newCard.getBalance());
 					return new ResponseDTO<>(HttpStatus.OK, "Transacción Anulada Exitosa", map);
 				}

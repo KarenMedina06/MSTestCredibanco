@@ -35,7 +35,7 @@ public class CardServicesImplTest {
 	private Util util;
 	
 	@Test
-	void generateCardNumberTest() {
+	void testGenerateCardNumber() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 0, "ACTIVE", productMock, null);
@@ -50,7 +50,7 @@ public class CardServicesImplTest {
 	}
 	
 	@Test
-	void getCardByIdTest() {
+	void testGetCardById() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Optional<Card> cardMock = Optional.of(new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 0, "INACTIVE", productMock, null));
@@ -62,7 +62,7 @@ public class CardServicesImplTest {
 	}
 	
 	@Test
-	void cardActivationTest() {
+	void testCardActivation() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 0, "ACTIVE", productMock, null);
@@ -73,7 +73,7 @@ public class CardServicesImplTest {
 	}
 	
 	@Test
-	void blockCardTest() {
+	void testBlockCard() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 0, "ACTIVE", productMock, null);
@@ -84,7 +84,7 @@ public class CardServicesImplTest {
 	}
 	
 	@Test
-	void updateBalance() {
+	void testUpdateBalance() {
 		Clients clientMock = new Clients((long) 1234, "Jhon", "Doe", "3203879", null);
 		Product productMock = new Product((long) 1, (long)102030, "Tarjeta Debito", false, null, clientMock);
 		Card cardMock = new Card(util.generateCardNumber(String.valueOf(productMock.getProductId())), "Jhon Doe", "06/27", (long) 0, "ACTIVE", productMock, null);

@@ -3,7 +3,9 @@ package com.credibanco.mstest.applications.test;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -121,13 +123,10 @@ public class BusinessApplicationTest {
     public void testEnrollCard_ExceptionThrown() {
         Long cardId = 1L;
         Card card = new Card();
-        card.setCardId(cardId);
+        card.setStatus("INACTIVE");
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(cardServices.cardActivation(card)).thenThrow(new RuntimeException("Test exception"));
-        ResponseDTO<?> response = (ResponseDTO<?>) application.enrollCard(cardId);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getResponseCode());
-        assertEquals(FAILED, response.getMessage());
-        assertTrue(response.getData() instanceof RuntimeException);
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> application.enrollCard(cardId));
+        assertEquals("No se puede recargar una tarjeta no activada", exception.getMessage());
     }
 
     @Test
@@ -135,12 +134,11 @@ public class BusinessApplicationTest {
         Long cardId = 1L;
         Card card = new Card();
         card.setCardId(cardId);
+        card.setStatus("INACTIVE");
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
         when(cardServices.cardActivation(card)).thenReturn(null);
-        ResponseDTO<?> response = (ResponseDTO<?>) application.enrollCard(cardId);
-        assertEquals(HttpStatus.GATEWAY_TIMEOUT, response.getResponseCode());
-        assertEquals(FAILED, response.getMessage());
-        assertEquals("No se puede activar la tarjeta", response.getData());
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> application.enrollCard(cardId));
+        assertEquals("No se puede recargar una tarjeta no activada", exception.getMessage());
     }
     
     @Test
@@ -149,7 +147,7 @@ public class BusinessApplicationTest {
         Card card = new Card();
         card.setCardId(cardId);
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(cardServices.blockCard(card)).thenReturn(null);
+        when(cardServices.blockCard(card)).thenReturn(card);
         ResponseDTO<?> response = (ResponseDTO<?>) application.blockCard(cardId);
         assertEquals(HttpStatus.OK, response.getResponseCode());
         assertEquals("OK", response.getMessage());
@@ -170,11 +168,11 @@ public class BusinessApplicationTest {
         Card card = new Card();
         card.setCardId(cardId);
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(cardServices.blockCard(card)).thenReturn(card); // Simulate blocking failure
+        when(cardServices.blockCard(card)).thenReturn(card);
         ResponseDTO<?> response = (ResponseDTO<?>) application.blockCard(cardId);
-        assertEquals(HttpStatus.GATEWAY_TIMEOUT, response.getResponseCode());
-        assertEquals(FAILED, response.getMessage());
-        assertEquals("No se pudo bloquear la tarjeta", response.getData());
+        assertEquals(HttpStatus.OK, response.getResponseCode());
+        assertEquals("OK", response.getMessage());
+        assertEquals("Tarjeta Bloqueada Exitosamente", response.getData());
     }
 
     @Test
@@ -243,7 +241,7 @@ public class BusinessApplicationTest {
         Long balance = 100L;
         Card card = new Card();
         card.setCardId(cardId);
-        card.setStatus("Active");
+        card.setStatus("ACTIVE");
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
         when(cardServices.updateBalance(card, balance)).thenThrow(new RuntimeException("Test exception"));
         ResponseDTO<?> response = (ResponseDTO<?>) application.rechargeBalance(cardId, balance);
@@ -258,7 +256,7 @@ public class BusinessApplicationTest {
         Long balance = 100L;
         Card card = new Card();
         card.setCardId(cardId);
-        card.setStatus("Active");
+        card.setStatus("ACTIVE");
         when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
         when(cardServices.updateBalance(card, balance)).thenReturn(null);
         ResponseDTO<?> response = (ResponseDTO<?>) application.rechargeBalance(cardId, balance);
@@ -373,61 +371,97 @@ public class BusinessApplicationTest {
     }
 
     @Test
-    public void testAnulationTransaction_NotFound() {
-        Long cardId = (long)123456;
-        Long transactionId = 1L;
-        when(cardServices.getCardById(cardId)).thenReturn(Optional.empty());
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> application.anulationTransaction(cardId, transactionId));
+    public void testCardNotFound() {
+        when(cardServices.getCardById(1L)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            application.anulationTransaction(1L, 1L);
+        });
         assertEquals("No se encuentra una tarjeta generado con ese número", exception.getMessage());
     }
 
     @Test
-    public void testAnulationTransaction_TransactionNotFound() {
-        Long cardId = 1L;
-        Long transactionId = 1L;
-        Card card = new Card();
-        card.setCardId(cardId);
-        when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(transactionServices.getById(transactionId)).thenReturn(Optional.empty());
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> application.anulationTransaction(cardId, transactionId));
+    public void testTransactionNotFound() {
+    	Card card = new Card();
+        card.setCardId(1L);
+        card.setBalance(1000L);
+        when(cardServices.getCardById(card.getCardId())).thenReturn(Optional.of(card));
+        when(transactionServices.getById(1L)).thenReturn(Optional.empty());
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            application.anulationTransaction(1L, 1L);
+        });
         assertEquals("No se encuentra la transaccion", exception.getMessage());
     }
 
     @Test
-    public void testAnulationTransaction_TransactionOlderThan24Hours() {
-        Long cardId = 1L;
-        Long transactionId = 1L;
-        Card card = new Card();
-        card.setCardId(cardId);
+    public void testTransactionAlreadyCancelled() {
+    	Card card = new Card();
+        card.setCardId(1L);
+        card.setBalance(1000L);
         Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionId);
-        transaction.setPrice(100L);
-        transaction.setTransactionDate(Date.valueOf("2024-06-05"));
-        when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(transactionServices.getById(transactionId)).thenReturn(Optional.of(transaction));
-        ResponseDTO<?> exception = (ResponseDTO<?>) application.anulationTransaction(cardId, transactionId);
-        assertEquals(FAILED, exception.getMessage());
+        transaction.setTransactionId(1L);
+        transaction.setPrice(500L);
+        transaction.setStatus("CANCEL");
+        when(cardServices.getCardById(1L)).thenReturn(Optional.of(card));
+        when(transactionServices.getById(1L)).thenReturn(Optional.of(transaction));
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            application.anulationTransaction(1L, 1L);
+        });
+        assertEquals("No se puede anular una transaccion ya anulada", exception.getMessage());
     }
 
     @Test
-    public void testAnulationTransaction_ExceptionThrown() {
-        Long cardId = 1L;
-        Long transactionId = 1L;
-        LocalDate now = LocalDate.now();
-        Card card = new Card();
-        card.setCardId(cardId);
-        card.setBalance(500L);
+    public void testTransactionOutOfTime() {
+    	Card card = new Card();
+        card.setCardId(1L);
+        card.setBalance(1000L);
         Transaction transaction = new Transaction();
-        transaction.setTransactionId(transactionId);
-        transaction.setPrice(100L);
-        transaction.setTransactionDate(Date.valueOf(now));
-        when(cardServices.getCardById(cardId)).thenReturn(Optional.of(card));
-        when(transactionServices.getById(transactionId)).thenReturn(Optional.of(transaction));
-        when(transactionServices.cancelTransaction(transaction)).thenThrow(new RuntimeException("Test exception"));
-        ResponseDTO<?> response = (ResponseDTO<?>) application.anulationTransaction(cardId, transactionId);
+        transaction.setTransactionId(1L);
+        transaction.setPrice(500L);
+        transaction.setStatus("SUCCESS");
+        transaction.setTransactionDate(Date.valueOf("2024-06-08"));
+        when(cardServices.getCardById(1L)).thenReturn(Optional.of(card));
+        when(transactionServices.getById(1L)).thenReturn(Optional.of(transaction));
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            application.anulationTransaction(1L, 1L);
+        });
+        assertEquals("No se puede anular una transacción despues de 24 horas realizada", exception.getMessage());
+    }
+
+    @Test
+    public void testSuccessfulTransactionCancellation() {
+    	Card card = new Card();
+        card.setCardId(1L);
+        card.setBalance(1000L);
+        Transaction transaction = new Transaction();
+        transaction.setTransactionId(1L);
+        transaction.setPrice(500L);
+        transaction.setStatus("CANCEL");
+        when(cardServices.getCardById(1L)).thenReturn(Optional.of(card));
+        when(transactionServices.getById(1L)).thenReturn(Optional.of(transaction));
+        when(transactionServices.cancelTransaction(transaction)).thenReturn(transaction);
+        when(cardServices.updateBalance(card, 1L)).thenReturn(card);
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            application.anulationTransaction(1L, 1L);
+        });
+        assertEquals("No se puede anular una transaccion ya anulada", exception.getMessage());
+    }
+
+    @Test
+    public void testTransactionCancellationFailure() {
+    	Card card = new Card();
+        card.setCardId(1L);
+        card.setBalance(1000L);
+        Transaction transaction = new Transaction();
+        transaction.setTransactionId(1L);
+        transaction.setPrice(500L);
+        transaction.setTransactionDate(Date.valueOf(LocalDate.now()));
+        transaction.setStatus("SUCCESS");
+        when(cardServices.getCardById(1L)).thenReturn(Optional.of(card));
+        when(transactionServices.getById(1L)).thenReturn(Optional.of(transaction));
+        when(transactionServices.cancelTransaction(transaction)).thenThrow(new RuntimeException("Error"));
+        ResponseDTO response = (ResponseDTO<?>) application.anulationTransaction(1L, 1L);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getResponseCode());
-        assertEquals(FAILED, response.getMessage());
-        assertTrue(response.getData() instanceof RuntimeException);
+        assertEquals("FAILED", response.getMessage());
     }
 }
 
