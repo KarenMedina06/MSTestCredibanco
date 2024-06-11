@@ -3,9 +3,7 @@ package com.credibanco.mstest.applications.test;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
@@ -31,6 +29,7 @@ import com.credibanco.mstest.services.impl.ProductServicesImpl;
 import com.credibanco.mstest.services.impl.TransactionServicesImpl;
 import com.credibanco.mstest.util.Util;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -353,6 +352,13 @@ public class BusinessApplicationTest {
         when(transactionServices.getById(transactionId)).thenReturn(Optional.empty());
         BadRequestException exception = assertThrows(BadRequestException.class, () -> application.getTransaction(transactionId));
         assertEquals("No se encuentra la transaccion", exception.getMessage());
+    }
+    
+    @Test
+    public void testGetTransaction_Exception() {
+    	Long transactionId = 1L;
+    	when(transactionServices.getById(transactionId)).thenReturn(null);
+        Exception exception = assertThrows(Exception.class, () -> application.getTransaction(transactionId));
     }
 
     @Test
